@@ -11,7 +11,6 @@ chrome.runtime.onMessage.addListener(async data => {
             handleOnSubmit(prefs)
             break;
         case 'startAlarm':
-            // handleOnSubmit(prefs)
             createAlarm();
             break;
         case 'stopAlarm':
