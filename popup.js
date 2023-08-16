@@ -18,14 +18,30 @@ const upOf = document.querySelector('.autoOf')
 let isSubmitted = false;
 let autOn = false;
 
+// let check=false;
+
 
 
 document.addEventListener("DOMContentLoaded", () => {
-    
+
     chrome.storage.local.get(['clearStorageDisabled', 'startButtonDisabled', 'stopButtonDisabled'], (data) => {
         clearStorage.disabled = data.clearStorageDisabled === undefined ? true : data.clearStorageDisabled;
         startButton.disabled = data.startButtonDisabled === undefined ? true : data.startButtonDisabled;
         stopButton.disabled = data.stopButtonDisabled === undefined ? true : data.stopButtonDisabled;
+    });
+
+    chrome.storage.local.get(['autoUp'], (data) => {
+        if (data.autoUp) {
+            startButton.style.display = 'none';
+            stopButton.style.display = 'block';
+            upOn.style.display = 'block';
+            upOf.style.display = 'none';
+        } else {
+            startButton.style.display = 'block';
+            stopButton.style.display = 'none';
+            upOn.style.display = 'none';
+            upOf.style.display = 'block';
+        }
     });
 });
 
@@ -120,6 +136,7 @@ chrome.runtime.onMessage.addListener((message) => {
 
 startButton.addEventListener('click', () => {
     chrome.runtime.sendMessage({ event: 'startAlarm' });
+    chrome.storage.local.set({ autoUp: true });
     startButton.style.display = 'none';
     stopButton.style.display = 'block';
     upOn.style.display = 'block';
@@ -130,7 +147,10 @@ startButton.addEventListener('click', () => {
 });
 
 stopButton.addEventListener('click', () => {
+    
+
     chrome.runtime.sendMessage({ event: 'stopAlarm' });
+    chrome.storage.local.set({ autoUp: false });
     startButton.style.display = 'block';
     stopButton.style.display = 'none';
     console.log("Alarm stopped");
@@ -187,7 +207,7 @@ const displayGfg = (data) => {
 
 
 document.getElementById('clearStorage').addEventListener('click', function () {
-    check = false;
+    // check = true;
     chrome.storage.local.clear(() => {
         console.log('Storage cleared');
         alert('Storage cleared successfully!');
@@ -203,5 +223,7 @@ document.getElementById('clearStorage').addEventListener('click', function () {
         startButtonDisabled: true,
         stopButtonDisabled: true
     });
+    chrome.storage.local.set({autoUp:false});
+
 });
 
